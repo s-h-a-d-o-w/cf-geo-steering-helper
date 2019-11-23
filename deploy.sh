@@ -1,5 +1,16 @@
-#!/bin/sh
-tar -cvf ./deploy.tar --exclude='*.map' ./captain-definition ./build/*
-# TODO: Add other parameters to this command so we can automate the deployment
-caprover deploy -t ./deploy.tar
-rm deploy.tar
+#!/bin/bash
+set -e
+
+export CAPROVER_APP=cf-geo-steering-helper
+export CAPROVER_TAR_FILE=./caprover_deployment.tar
+
+yarn build
+tar -cvf ./caprover_deployment.tar ./Dockerfile ./build/*
+
+export CAPROVER_URL=$CAPROVER_MACHINE_01
+caprover deploy
+
+export CAPROVER_URL=$CAPROVER_MACHINE_02
+caprover deploy
+
+rm caprover_deployment.tar
